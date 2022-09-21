@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="">MAX-2.0</a>
+    <span class="text-muted ms-2" style="cursor: default"
+      >A Leading Digital Ad-Tech Platform...</span
+    >
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarText"
+      aria-controls="navbarText"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item mx-2">
+          <a
+            class="nav-link active"
+            aria-current="page"
+            routerLink="/campaigns/create"
+            >Campaigns</a
+          >
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" routerLink="/adgroups">Ad-Groups</a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" routerLink="/ads">Advertisements</a>
+        </li>
+      </ul>
+      <form class="d-flex ms-4" role="search">
+        <button class="btn btn-outline-info fw-light" type="submit">
+          Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>

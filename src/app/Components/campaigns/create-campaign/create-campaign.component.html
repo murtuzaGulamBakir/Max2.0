@@ -1,0 +1,325 @@
+<div class="container">
+  <form
+    id="campaignForm"
+    (ngSubmit)="handleCreateCampaignSubmit()"
+    action="/submitForm"
+    method="POST"
+    class="m-auto"
+  >
+    <!-- Form heading -->
+    <h5 class="fs-2 mb-4">New Campaign</h5>
+
+    <!-- Campaign Name Field -->
+    <mat-form-field appearance="outline">
+      <mat-label>Campaign Name</mat-label>
+      <input
+        required
+        [(ngModel)]="campaignModel.name"
+        name="campaignName"
+        placeholder="Iphone14"
+        matInput
+        type="text"
+      />
+    </mat-form-field>
+
+    <!-- Campaign Start Date -->
+    <mat-form-field class="example-full-width" appearance="outline">
+      <mat-label>Select Start Date</mat-label>
+      <input
+        required
+        [(ngModel)]="campaignModel.startDate"
+        matInput
+        [matDatepicker]="pickerStartDate"
+        name="campaignStartDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="pickerStartDate"
+      ></mat-datepicker-toggle>
+      <mat-datepicker touchUi #pickerStartDate></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Campaign End Date -->
+    <mat-form-field class="example-full-width-1" appearance="outline">
+      <mat-label>Select End Date</mat-label>
+      <input
+        required
+        matInput
+        [matDatepicker]="pickerEndDate"
+        [(ngModel)]="campaignModel.endDate"
+        name="campaignEndDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="pickerEndDate"
+      ></mat-datepicker-toggle>
+      <mat-datepicker touchUi #pickerEndDate></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Daily budget -->
+    <mat-form-field appearance="outline">
+      <mat-label>Daily Budget ($)</mat-label>
+      <input
+        required
+        [(ngModel)]="campaignModel.dailyBudget"
+        matInput
+        type="number"
+        step="0.01"
+        name="campaignDailyBudget"
+      />
+    </mat-form-field>
+
+    <!-- OverAll budget -->
+    <mat-form-field appearance="outline">
+      <mat-label>Overall Budget ($)</mat-label>
+      <input
+        required
+        matInput
+        type="number"
+        step="0.01"
+        name="campaignOverallBudget"
+        [(ngModel)]="campaignModel.overallBudget"
+      />
+    </mat-form-field>
+
+    <!-- Budget Pacing -->
+    <mat-form-field appearance="outline">
+      <mat-label>Budget Pacing</mat-label>
+      <mat-select
+        required
+        name="campaignBudgetPacing"
+        [(ngModel)]="campaignModel.budgetPacing"
+      >
+        <mat-option *ngFor="let budget of budgetsList" [value]="budget.value">
+          {{ budget.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Domain Material Chips   -->
+    <mat-form-field class="example-chip-list" appearance="outline">
+      <mat-label>Campaign Domains</mat-label>
+      <mat-chip-list #chipList aria-label="Domain selection">
+        <mat-chip
+          selected=""
+          *ngFor="let domain of domains"
+          (removed)="remove(domain)"
+        >
+          {{ domain.name }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+
+        <input
+          name="campaignDomains"
+          placeholder="New Domain..."
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="add($event)"
+        />
+      </mat-chip-list>
+    </mat-form-field>
+
+    <!-- List Of Devices -->
+    <mat-form-field appearance="outline">
+      <mat-label>Devices</mat-label>
+      <mat-select
+        [(ngModel)]="campaignModel.devices"
+        [formControl]="formObjForDevice"
+        multiple
+        required
+      >
+        <mat-select-trigger name="campaignDevices">
+          {{formObjForDevice.value?.[0] || ''}}
+          <span
+            *ngIf="(formObjForDevice.value?.length || 0) > 1"
+            class="example-additional-selection"
+          >
+            (+{{ (formObjForDevice.value?.length || 0) - 1 }}
+            {{ formObjForDevice.value?.length === 2 ? "other" : "others" }})
+          </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let device of devicesNames" [value]="device">{{
+          device
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Ad Sheduling -->
+    <mat-form-field appearance="outline">
+      <mat-label>Ad Scheduling Days</mat-label>
+      <mat-select
+        required
+        [(ngModel)]="campaignModel.adScheduling"
+        [formControl]="weekDays"
+        multiple
+      >
+        <mat-select-trigger>
+          {{weekDays.value?.[0] || ''}}
+          <span
+            *ngIf="(weekDays.value?.length || 0) > 1"
+            class="example-additional-selection"
+          >
+            (+{{ (weekDays.value?.length || 0) - 1 }}
+            {{ weekDays.value?.length === 2 ? "other" : "others" }})
+          </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let day of weekDaysList" [value]="day">{{
+          day
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Experimental Section Starts -->
+
+    <mat-label
+      *ngFor="let dayOfAdd of this.campaignModel.adScheduling; let i = index"
+    >
+      <!-- Campaign Ads Time Field -->
+      <mat-form-field appearance="outline">
+        <mat-label>{{ dayOfAdd }} Ads Time in Hours </mat-label>
+        <input
+          required="true"
+          type="number"
+          name="datAdsTime{{ i }}"
+          placeholder="3 hours"
+          matInput
+          min="1"
+          max="24"
+        />
+      </mat-form-field>
+    </mat-label>
+
+    <!-- Experimental Section Ends -->
+
+    <!-- GeoLocation Select -->
+
+    <mat-form-field class="example-full-width" appearance="outline">
+      <mat-label>Geo-locations</mat-label>
+      <input
+        type="text"
+        placeholder="India"
+        aria-label="Number"
+        matInput
+        [matAutocomplete]="autoIncludeGeoLocation"
+        (keyup)="handleGeoLocationFilter($event)"
+      />
+      <mat-autocomplete
+        #autoIncludeGeoLocation="matAutocomplete"
+        (optionSelected)="handleGeoLocationSelect($event)"
+      >
+        <mat-option
+          *ngFor="let location of listOfLocations; let i = index"
+          [value]="location.name"
+        >
+          {{ location.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Included GeoLocation   -->
+
+    <mat-form-field
+      class="example-chip-list {{
+        campaignModel.geoLocations.length > 0 ? '' : 'd-none'
+      }}"
+      appearance="outline"
+    >
+      <!-- <mat-label>Included GeoLocations</mat-label> -->
+      <mat-chip-list #chipList aria-label="Fruit selection">
+        <mat-chip
+          *ngFor="let selectedLocation of campaignModel.geoLocations"
+          (removed)="handlGeolocationRemove($event)"
+          value="{{ selectedLocation }}"
+          selected
+        >
+          {{ selectedLocation }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input
+          disabled=""
+          placeholder="Selected Locations"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="add($event)"
+        />
+      </mat-chip-list>
+    </mat-form-field>
+
+    <!--Excluded GeoLocation Select -->
+
+    <mat-form-field class="example-full-width" appearance="outline">
+      <mat-label>Excluded Geo-locations</mat-label>
+      <input
+        type="text"
+        placeholder="India"
+        aria-label="Number"
+        matInput
+        [matAutocomplete]="autoExclude"
+        (keyup)="handleGeoLocationFilter($event)"
+      />
+      <mat-autocomplete
+        #autoExclude="matAutocomplete"
+        (optionSelected)="handleExcludedGeoLocationSelect($event)"
+      >
+        <mat-option
+          *ngFor="let location of listOfLocations; let i = index"
+          [value]="location.name"
+        >
+          {{ location.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Excluded GeoLocations   -->
+
+    <mat-form-field
+      class="example-chip-list {{
+        campaignModel.excludedGeolocations.length > 0 ? '' : 'd-none'
+      }}"
+      appearance="outline"
+    >
+      <!-- <mat-label>Excluded GeoLocations</mat-label> -->
+      <mat-chip-list #chipList aria-label="Fruit selection">
+        <mat-chip
+          *ngFor="let excludedLocation of campaignModel.excludedGeolocations"
+          (removed)="handlExcludedGeolocationRemove($event)"
+          value="{{ excludedLocation }}"
+          selected
+        >
+          {{ excludedLocation }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input
+          disabled=""
+          placeholder="Excluded Locations"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="add($event)"
+        />
+      </mat-chip-list>
+    </mat-form-field>
+    <!-- Error Field -->
+    <p class="text-danger fs-6 fw-semibold">{{ err }}</p>
+
+    <!-- Submit Button -->
+    <button
+      class="d-block ms-auto mr-2 py-2 px-4 fs-6 fw-lighter"
+      type="submit"
+      mat-raised-button
+      color="primary"
+    >
+      Create Campaign
+    </button>
+  </form>
+</div>
