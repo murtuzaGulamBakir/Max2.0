@@ -2,7 +2,7 @@
   <form
     id="campaignForm"
     (ngSubmit)="handleCreateCampaignSubmit()"
-    action="/submitForm"
+    action=""
     method="POST"
     class="m-auto"
   >
@@ -101,13 +101,13 @@
     <!-- Domain Material Chips   -->
     <mat-form-field class="example-chip-list" appearance="outline">
       <mat-label>Campaign Domains</mat-label>
-      <mat-chip-list #chipList aria-label="Domain selection">
+      <mat-chip-list #chipListDomain aria-label="Domain selection">
         <mat-chip
-          selected=""
-          *ngFor="let domain of domains"
+          *ngFor="let domain of campaignModel.domains"
           (removed)="remove(domain)"
+          selected
         >
-          {{ domain.name }}
+          {{ domain }}
           <button matChipRemove>
             <mat-icon>cancel</mat-icon>
           </button>
@@ -115,8 +115,8 @@
 
         <input
           name="campaignDomains"
-          placeholder="New Domain..."
-          [matChipInputFor]="chipList"
+          placeholder="Included Domains..."
+          [matChipInputFor]="chipListDomain"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="add($event)"
@@ -124,6 +124,32 @@
       </mat-chip-list>
     </mat-form-field>
 
+    <!--Excluded Domain Material Chips   -->
+    <mat-form-field class="example-chip-list" appearance="outline">
+      <mat-label>Excluded Domains</mat-label>
+      <mat-chip-list #chipListExcludedDomain aria-label="Excluded Domain">
+        <mat-chip
+          color="accent"
+          *ngFor="let excludeddomain of campaignModel.excludedDomains"
+          selected
+          (removed)="removeExcludedDomain(excludeddomain)"
+        >
+          {{ excludeddomain }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+
+        <input
+          name="campaignExcludedDomains"
+          placeholder="Excluded Domains..."
+          [matChipInputFor]="chipListExcludedDomain"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="addExcludedDomain($event)"
+        />
+      </mat-chip-list>
+    </mat-form-field>
     <!-- List Of Devices -->
     <mat-form-field appearance="outline">
       <mat-label>Devices</mat-label>
@@ -149,12 +175,12 @@
       </mat-select>
     </mat-form-field>
 
-    <!-- Ad Sheduling -->
+    <!-- Ad Scheduling Day -->
     <mat-form-field appearance="outline">
       <mat-label>Ad Scheduling Days</mat-label>
       <mat-select
         required
-        [(ngModel)]="campaignModel.adScheduling"
+        [(ngModel)]="campaignModel.adSchedulingDays"
         [formControl]="weekDays"
         multiple
       >
@@ -174,27 +200,25 @@
       </mat-select>
     </mat-form-field>
 
-    <!-- Experimental Section Starts -->
-
-    <mat-label
-      *ngFor="let dayOfAdd of this.campaignModel.adScheduling; let i = index"
+    <!-- Ad Scheduling Time -->
+    <mat-form-field
+      *ngFor="
+        let dayOfAdd of this.campaignModel.adSchedulingDays;
+        let i = index
+      "
+      appearance="outline"
     >
-      <!-- Campaign Ads Time Field -->
-      <mat-form-field appearance="outline">
-        <mat-label>{{ dayOfAdd }} Ads Time in Hours </mat-label>
-        <input
-          required="true"
-          type="number"
-          name="datAdsTime{{ i }}"
-          placeholder="3 hours"
-          matInput
-          min="1"
-          max="24"
-        />
-      </mat-form-field>
-    </mat-label>
-
-    <!-- Experimental Section Ends -->
+      <mat-label>{{ dayOfAdd }} Ad Time</mat-label>
+      <mat-select
+        (selectionChange)="handleWeekDayTimeShedule($event, dayOfAdd)"
+        multiple
+        #timeOfDay{{i}}
+      >
+        <mat-option *ngFor="let time of WeekDayTimeList" [value]="time">{{
+          time
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <!-- GeoLocation Select -->
 
@@ -287,8 +311,9 @@
       appearance="outline"
     >
       <!-- <mat-label>Excluded GeoLocations</mat-label> -->
-      <mat-chip-list #chipList aria-label="Fruit selection">
+      <mat-chip-list #chipListExcludeLocation aria-label="Fruit selection">
         <mat-chip
+          color="accent"
           *ngFor="let excludedLocation of campaignModel.excludedGeolocations"
           (removed)="handlExcludedGeolocationRemove($event)"
           value="{{ excludedLocation }}"
@@ -302,7 +327,7 @@
         <input
           disabled=""
           placeholder="Excluded Locations"
-          [matChipInputFor]="chipList"
+          [matChipInputFor]="chipListExcludeLocation"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="add($event)"

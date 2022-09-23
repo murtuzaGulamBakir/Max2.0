@@ -1,16 +1,14 @@
+import { CampaignModel } from './../../../campaign-model';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
-import { CampaignModel } from 'src/app/campaign-model';
 import { HttpClient } from '@angular/common/http';
+
 import { Country, State, City } from 'country-state-city';
+// import { every } from 'rxjs';
 
 // Interfaces For Data Options Rendering in Campaign
-
-export interface Domain {
-  name: string;
-}
 
 export interface BudgetPacing {
   value: string;
@@ -29,45 +27,139 @@ export interface WeekDaysAdSchedule {
 })
 export class CreateCampaignComponent implements OnInit {
   // Angular HTTPClient For Calling Endpoints
+
+  tempVar: any = '';
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {}
 
   // Initializing Campaign Form Object Model
-  campaignModel = new CampaignModel('', '', '', 0, 0, [], [], '', [], [], []);
+  campaignModel = new CampaignModel(
+    '',
+    '',
+    '',
+    0,
+    0,
+    [],
+    [],
+    [],
+    '',
+    [],
+    [],
+    [],
+    []
+  );
 
   err: string = ''; // error field in UI
-
-  getCurrentCampaignModelData() {
-    return JSON.stringify(this.campaignModel);
-  }
 
   // ************************* Domain Field Setup Code Start
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  domains: Domain[] = [];
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-    // Add A Domain
-    if (value) {
-      this.domains.push({ name: value });
+
+    // Regular Expression Domain Validation
+    var regexForDomainvalidation =
+      '^(?!-)[A-Za-z0-9-]+([\\-\\.]{1}[a-z0-9]+)*\\.[A-Za-z]{2,6}$';
+
+    var regexpObj = new RegExp(regexForDomainvalidation);
+
+    // if regexp return false then domain is invalid so stop function excution
+    if (!regexpObj.test(value)) {
+      return;
     }
+    // check if domain already exist in included or excluded domains
+    if (
+      this.campaignModel.domains.includes(value) ||
+      this.campaignModel.excludedDomains.includes(value)
+    ) {
+      return;
+    }
+
     this.campaignModel.domains.push(value);
     // Clear the input value
     event.chipInput!.clear();
   }
 
-  remove(domain: Domain): void {
-    const index = this.domains.indexOf(domain);
-    const indexCampignDomain = this.campaignModel.domains.indexOf(domain.name);
-    if (index >= 0) {
-      this.domains.splice(index, 1);
-      this.campaignModel.domains.splice(indexCampignDomain, 1);
+  remove(domainToBeRemoved: string): void {
+    const indexCampignDomainToBeRemoved =
+      this.campaignModel.domains.indexOf(domainToBeRemoved);
+    if (indexCampignDomainToBeRemoved >= 0) {
+      this.campaignModel.domains.splice(indexCampignDomainToBeRemoved, 1);
     }
   }
 
   // ************************* Domain Field Setup Code End
+
+  // ************************* Excluded Domain Field Setup Code Start
+  addExcludedDomain(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Regular Expression Domain Validation
+    var regexForDomainvalidation =
+      '^(?!-)[A-Za-z0-9-]+([\\-\\.]{1}[a-z0-9]+)*\\.[A-Za-z]{2,6}$';
+
+    var regexpObj = new RegExp(regexForDomainvalidation);
+
+    // if regexp return false then domain is invalid so stop function excution
+    if (!regexpObj.test(value)) {
+      return;
+    }
+
+    // check if domain already exist in included or excluded domains
+    if (
+      this.campaignModel.domains.includes(value) ||
+      this.campaignModel.excludedDomains.includes(value)
+    ) {
+      return;
+    }
+    // Add A Domain
+    if (value) {
+      this.campaignModel.excludedDomains.push(value);
+    }
+    // Clear the input value
+    event.chipInput!.clear();
+  }
+
+  removeExcludedDomain(excludedDomainTobeRemoved: string) {
+    const indexOfDomainToBeRemoved = this.campaignModel.excludedDomains.indexOf(
+      excludedDomainTobeRemoved
+    );
+
+    if (indexOfDomainToBeRemoved >= 0) {
+      this.campaignModel.excludedDomains.splice(indexOfDomainToBeRemoved, 1);
+    }
+  }
+
+  // hanling  Time Selection for Various Days
+
+  handleWeekDayTimeShedule(event: any, dayOfTheAd: string) {
+    // if weekDay Already Exist in adSchedulingDayAndTime then ovveride that Object
+
+    // finding if Object already exist in "adSchedulingDayAndTime"
+    const dayTimeObject = this.campaignModel.adSchedulingDayAndTime.find(
+      ({ name }) => name == dayOfTheAd
+    );
+
+    // if does not exist then Create a New Object with Day and Time values
+    if (!dayTimeObject) {
+      // Else
+
+      this.campaignModel.adSchedulingDayAndTime.push({
+        name: dayOfTheAd,
+        time: event.value,
+      });
+    }
+
+    // Object already Exist
+    else {
+      // Update Existing Entry  and Time in Corresponding day
+      dayTimeObject.time = event.value;
+    }
+  }
+
+  // ************************* Excluded Field Setup Code End
 
   // ********************** Campaign Devices Start
   formObjForDevice = new FormControl('');
@@ -93,6 +185,31 @@ export class CreateCampaignComponent implements OnInit {
     'Sunday',
   ];
 
+  WeekDayTimeList: string[] = [
+    '01:00',
+    '02:00',
+    '03:00',
+    '04:00',
+    '05:00',
+    '06:00',
+    '07:00',
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00',
+    '18:00',
+    '19:00',
+    '20:00',
+    '21:00',
+    '22:00',
+    '23:00',
+  ];
   // Handles Campaign Form Submit
   handleCreateCampaignSubmit() {
     this.err = '';
@@ -142,7 +259,7 @@ export class CreateCampaignComponent implements OnInit {
       return;
     }
     // validating AdSchdeduling
-    if (campaignFormData.adScheduling.length <= 0) {
+    if (campaignFormData.adSchedulingDays.length <= 0) {
       this.err = 'Select Atleast One Schedule Day !!';
       return;
     }
