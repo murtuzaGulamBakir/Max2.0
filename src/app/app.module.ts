@@ -54,6 +54,9 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
 import {
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
@@ -105,6 +108,7 @@ import {
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,
     HttpClientModule,
+    MatTableModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

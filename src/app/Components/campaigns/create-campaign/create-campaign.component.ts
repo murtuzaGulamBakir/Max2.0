@@ -5,9 +5,6 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
-import { Country, State, City } from 'country-state-city';
-// import { every } from 'rxjs';
-
 // Interfaces For Data Options Rendering in Campaign
 
 export interface BudgetPacing {
@@ -27,10 +24,7 @@ export interface WeekDaysAdSchedule {
 })
 export class CreateCampaignComponent implements OnInit {
   // Angular HTTPClient For Calling Endpoints
-
-  tempVar: any = '';
   constructor(private http: HttpClient) {}
-
   ngOnInit(): void {}
 
   // Initializing Campaign Form Object Model
@@ -52,6 +46,82 @@ export class CreateCampaignComponent implements OnInit {
 
   err: string = ''; // error field in UI
 
+  // Handling CSV Upload and Reading Data
+  csvInputChange(fileInputEvent: any, domainType: string) {
+    var uploadedFile: any = fileInputEvent.target.files[0];
+    var fileName = uploadedFile.name;
+
+    // Validatig File Extension
+    var fileExtension =
+      fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length) ||
+      fileName;
+
+    //  Stop If File is Invalid
+    if (fileExtension.toLowerCase() != 'csv') {
+      return;
+    }
+    // Creating FileStream Object and Seperating Data into Arrays
+    var reader = new FileReader();
+    reader.readAsText(uploadedFile);
+    reader.onload = function (e) {
+      var csvDataBuffer = e.target!.result;
+      var dataStr = <string>csvDataBuffer;
+      var csvDataConvertedToArray = [];
+      const rows = dataStr.split('\n');
+      for (let i = 0; i < rows.length; i++) {
+        var tempArray = rows[i].split(',');
+        for (let j = 0; j < tempArray.length; j++) {
+          csvDataConvertedToArray.push(tempArray[j]);
+        }
+      }
+      window.localStorage.setItem(
+        'csvArr',
+        JSON.stringify(csvDataConvertedToArray)
+      );
+    };
+
+    // sets Value of Global Campaign Model Form Object
+    this.setDomainValues(domainType);
+  }
+
+  // Detects Valid 'Domain' in CSV File and Adds to Campaign Domain
+  setDomainValues(domainType: string) {
+    setTimeout(() => {
+      var lsString: any;
+      lsString = localStorage.getItem('csvArr');
+      lsString = JSON.parse(lsString);
+
+      // Parsing Entire CSV File Data and validating
+      for (let domainIndex in lsString) {
+        const value = (lsString[domainIndex] || '').trim();
+        // Regular Expression Domain Validation
+        var regexForDomainvalidation =
+          '^(?!-)[A-Za-z0-9-]+([\\-\\.]{1}[a-z0-9]+)*\\.[A-Za-z]{2,6}$';
+
+        var regexpObj = new RegExp(regexForDomainvalidation);
+        // if regexp return false then domain is invalid so stop function excution
+        if (!regexpObj.test(value)) {
+          continue;
+        }
+        // check if domain already exist in included or excluded domains
+        if (
+          this.campaignModel.domains.includes(value) ||
+          this.campaignModel.excludedDomains.includes(value)
+        ) {
+          continue;
+        }
+
+        // adding valid  domains to global array
+        if (domainType == 'INCLUDEDDOMAINS') {
+          this.campaignModel.domains.push(value);
+          localStorage.removeItem('csvArr');
+        } else if (domainType == 'EXCLUDEDDOMAINS') {
+          this.campaignModel.excludedDomains.push(value);
+          localStorage.removeItem('csvArr');
+        }
+      }
+    }, 200);
+  }
   // ************************* Domain Field Setup Code Start
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;

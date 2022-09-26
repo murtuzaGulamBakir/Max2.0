@@ -97,13 +97,14 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
+    <!-- class="{{ i < 10 ? '' : 'd-none' }}" -->
     <!-- Domain Material Chips   -->
-    <mat-form-field class="example-chip-list" appearance="outline">
+
+    <!-- <mat-form-field class="example-chip-list" appearance="outline">
       <mat-label>Campaign Domains</mat-label>
       <mat-chip-list #chipListDomain aria-label="Domain selection">
         <mat-chip
-          *ngFor="let domain of campaignModel.domains"
+          *ngFor="let domain of campaignModel.domains; let i = index"
           (removed)="remove(domain)"
           selected
         >
@@ -122,15 +123,39 @@
           (matChipInputTokenEnd)="add($event)"
         />
       </mat-chip-list>
-    </mat-form-field>
+    </mat-form-field> -->
+    <!-- File Upload Included Domain-->
+
+    <input
+      #csvInputIncludedDomains
+      hidden="true"
+      type="file"
+      onclick="this.value=null"
+      (change)="csvInputChange($event, 'INCLUDEDDOMAINS')"
+      accept=".csv"
+    />
+    <button
+      mat-flat-button
+      color="primary"
+      class="px-3 py-2 fs-6"
+      (click)="csvInputIncludedDomains.click()"
+      type="button"
+    >
+      Upload Included Domains (CSV)</button
+    ><br />
+
+    <!-- class="{{ i < 10 ? '' : 'd-none' }}" -->
 
     <!--Excluded Domain Material Chips   -->
-    <mat-form-field class="example-chip-list" appearance="outline">
+    <!-- <mat-form-field class="example-chip-list" appearance="outline">
       <mat-label>Excluded Domains</mat-label>
       <mat-chip-list #chipListExcludedDomain aria-label="Excluded Domain">
         <mat-chip
           color="accent"
-          *ngFor="let excludeddomain of campaignModel.excludedDomains"
+          *ngFor="
+            let excludeddomain of campaignModel.excludedDomains;
+            let i = index
+          "
           selected
           (removed)="removeExcludedDomain(excludeddomain)"
         >
@@ -149,7 +174,27 @@
           (matChipInputTokenEnd)="addExcludedDomain($event)"
         />
       </mat-chip-list>
-    </mat-form-field>
+    </mat-form-field> -->
+
+    <!-- File Upload Excluded -->
+
+    <input
+      #csvInputExcludedDomains
+      hidden="true"
+      type="file"
+      onclick="this.value=null"
+      (change)="csvInputChange($event, 'EXCLUDEDDOMAINS')"
+      accept=".csv"
+    />
+    <button
+      mat-flat-button
+      class="px-3 py-2 fs-6 bg-danger text-light"
+      (click)="csvInputExcludedDomains.click()"
+      type="button"
+    >
+      Upload Excluded Domains (CSV)</button
+    ><br />
+
     <!-- List Of Devices -->
     <mat-form-field appearance="outline">
       <mat-label>Devices</mat-label>

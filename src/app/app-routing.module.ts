@@ -1,3 +1,4 @@
+import { CreateAdgroupComponent } from './Components/adgroups/create-adgroup/create-adgroup.component';
 import { CreateCampaignComponent } from './Components/campaigns/create-campaign/create-campaign.component';
 import { SignupComponent } from './Components/signup/signup.component';
 import { LoginComponent } from './Components/login/login.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'user/login', component: LoginComponent },
   { path: 'user/signup', component: SignupComponent },
   { path: 'campaigns/create', component: CreateCampaignComponent },
+  { path: 'adgroups/create', component: CreateAdgroupComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 
