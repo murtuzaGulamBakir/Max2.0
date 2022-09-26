@@ -1,0 +1,80 @@
+<div class="container">
+  <form
+    id="adsForm"
+    (ngSubmit)="handleCreateAdsSubmit()"
+    action=""
+    method="POST"
+    class="m-auto"
+  >
+    <!-- Form heading -->
+    <h5 class="fs-2 mb-4">New Ads</h5>
+
+    <!-- Ads Name Field -->
+    <mat-form-field appearance="outline">
+      <mat-label>Ads Name</mat-label>
+      <input
+        required
+        [(ngModel)]="adsModel.title"
+        name="adsName"
+        placeholder="Iphone14"
+        matInput
+        type="text"
+      />
+    </mat-form-field>
+
+    <!-- Ads Description -->
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea
+        [(ngModel)]="adsModel.description"
+        name="description"
+        placeholder="About this Ad..."
+        matInput
+        required=""
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="5"
+      ></textarea>
+    </mat-form-field>
+
+    <!-- Image Url Field -->
+    <mat-form-field appearance="outline">
+      <mat-label>Image URL</mat-label>
+      <input
+        required
+        name="adsImageUrl"
+        [(ngModel)]="adsModel.imageUrl"
+        name="adsImageUrl"
+        placeholder="https://forbes.com"
+        matInput
+        type="url"
+      />
+    </mat-form-field>
+
+    <!-- Destination Url Field -->
+    <mat-form-field appearance="outline">
+      <mat-label>Destination URL</mat-label>
+      <input
+        required
+        [(ngModel)]="adsModel.destinationUrl"
+        name="adsDestinationUrl"
+        placeholder="https://image.png"
+        matInput
+        type="url"
+      />
+    </mat-form-field>
+    <!-- Error Field -->
+    <!-- <p class="text-danger fs-6 fw-semibold">{{ err }}</p> -->
+
+    <!-- Submit Button -->
+    <button
+      class="d-block ms-auto mr-2 py-2 px-4 fs-6 fw-lighter"
+      type="submit"
+      mat-raised-button
+      color="primary"
+    >
+      Create Ad
+    </button>
+  </form>
+</div>

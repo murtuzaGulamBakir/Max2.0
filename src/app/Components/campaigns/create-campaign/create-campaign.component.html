@@ -266,10 +266,10 @@
     </mat-form-field>
 
     <!-- GeoLocation Select -->
-
     <mat-form-field class="example-full-width" appearance="outline">
       <mat-label>Geo-locations</mat-label>
       <input
+        [formControl]="searchControlGeolocation"
         type="text"
         placeholder="India"
         aria-label="Number"
@@ -282,7 +282,7 @@
         (optionSelected)="handleGeoLocationSelect($event)"
       >
         <mat-option
-          *ngFor="let location of listOfLocations; let i = index"
+          *ngFor="let location of campaignModel.domains; let i = index"
           [value]="location.name"
         >
           {{ location.name }}

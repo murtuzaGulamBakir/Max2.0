@@ -7,6 +7,7 @@ import { NgModule, Component } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DisplayCampaignComponent } from './Components/campaigns/display-campaign/display-campaign.component';
 import { PageNotFoundComponent } from './Components/page-not-found/page-not-found.component';
+import { CreateAdsComponent } from './Components/ads/create-ads/create-ads.component';
 
 var login = true;
 const routes: Routes = [
@@ -21,6 +22,8 @@ const routes: Routes = [
   { path: 'user/signup', component: SignupComponent },
   { path: 'campaigns/create', component: CreateCampaignComponent },
   { path: 'adgroups/create', component: CreateAdgroupComponent },
+  { path: 'ads/create', component: CreateAdsComponent },
+
   { path: '**', component: PageNotFoundComponent },
 ];
 

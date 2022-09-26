@@ -1,9 +1,15 @@
-import { CampaignModel } from './../../../campaign-model';
+import { CampaignModel } from '../campaign-model';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  startWith,
+} from 'rxjs/operators';
 
 // Interfaces For Data Options Rendering in Campaign
 
@@ -23,9 +29,46 @@ export interface WeekDaysAdSchedule {
   styleUrls: ['./create-campaign.component.css'],
 })
 export class CreateCampaignComponent implements OnInit {
+  //  Debounce Variable
+  searchControlGeolocation = new FormControl('');
+
   // Angular HTTPClient For Calling Endpoints
   constructor(private http: HttpClient) {}
-  ngOnInit(): void {}
+
+  ngOnInit(): void {
+    // Debounce on GeoLocation Include
+    this.searchControlGeolocation.valueChanges
+      .pipe(
+        // execute only id search lenghth > 2
+        // filter((searchedText) => searchedText.length > 2),
+        startWith(''),
+        // Time in milliseconds between key events
+        debounceTime(1000),
+        // If previous query is diffent from current
+        distinctUntilChanged()
+        // subscription for response
+      )
+      .subscribe((searchedText: string) => {
+        console.log(searchedText);
+        this.http
+          .get(
+            'https://localhost:44318/api/geolocations/?location=' +
+              searchedText,
+            {
+              params: new HttpParams({
+                fromObject: {
+                  action: 'opensearch',
+                  format: 'json',
+                  origin: '*',
+                },
+              }).set('search', searchedText),
+            }
+          )
+          .subscribe((res) => {
+            console.log(res);
+          });
+      });
+  }
 
   // Initializing Campaign Form Object Model
   campaignModel = new CampaignModel(
@@ -135,7 +178,7 @@ export class CreateCampaignComponent implements OnInit {
 
     var regexpObj = new RegExp(regexForDomainvalidation);
 
-    // if regexp return false then domain is invalid so stop function excution
+    // if regexp return false then domain is invalid so stop function execution
     if (!regexpObj.test(value)) {
       return;
     }
@@ -172,7 +215,7 @@ export class CreateCampaignComponent implements OnInit {
 
     var regexpObj = new RegExp(regexForDomainvalidation);
 
-    // if regexp return false then domain is invalid so stop function excution
+    // if regexp return false then domain is invalid so stop function execution
     if (!regexpObj.test(value)) {
       return;
     }
@@ -6321,11 +6364,11 @@ export class CreateCampaignComponent implements OnInit {
 
   // Handling geoLocation filter
   handleGeoLocationFilter(event: any) {
-    this.listOfLocations = this.masterListOfLocations;
-    var searchInput = event.target.value;
-    this.listOfLocations = this.listOfLocations.filter((location: any) => {
-      return location.name.toLowerCase().includes(searchInput.toLowerCase());
-    });
+    // var searchInput = event.target.value;
+    // this.listOfLocations = this.masterListOfLocations;
+    // this.listOfLocations = this.listOfLocations.filter((location: any) => {
+    //   return location.name.toLowerCase().includes(searchInput.toLowerCase());
+    // });
   }
 
   // handling Multiple Geolocation Selection

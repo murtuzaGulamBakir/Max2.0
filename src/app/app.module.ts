@@ -13,7 +13,7 @@ import { SignupComponent } from './Components/signup/signup.component';
 import { LoginComponent } from './Components/login/login.component';
 import { PageNotFoundComponent } from './Components/page-not-found/page-not-found.component';
 import { AppComponent } from './app.component';
-
+import { CreateAdsComponent } from './Components/ads/create-ads/create-ads.component';
 // forms import
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -62,6 +62,8 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule,
 } from '@angular-material-components/datetime-picker';
+import { DisplayAdsComponent } from './Components/ads/display-ads/display-ads.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -73,6 +75,8 @@ import {
     SignupComponent,
     LoginComponent,
     PageNotFoundComponent,
+    CreateAdsComponent,
+    DisplayAdsComponent,
   ],
   imports: [
     BrowserModule,
