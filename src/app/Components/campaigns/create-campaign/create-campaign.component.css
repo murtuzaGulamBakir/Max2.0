@@ -11,7 +11,9 @@ mat-form-field {
 .container form > * {
   margin-top: 8px;
 }
-
+.container form p {
+  margin-top: -18px;
+}
 form {
   max-width: 650px;
   overflow-y: scroll;

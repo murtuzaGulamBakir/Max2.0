@@ -1,6 +1,5 @@
 <div class="container">
   <form
-    id="campaignForm"
     (ngSubmit)="handleCreateCampaignSubmit()"
     action=""
     method="POST"
@@ -13,15 +12,19 @@
     <mat-form-field appearance="outline">
       <mat-label>Campaign Name</mat-label>
       <input
-        required
         [(ngModel)]="campaignModel.name"
         name="campaignName"
         placeholder="Iphone14"
         matInput
         type="text"
+        required
+        minlength="4"
+        required
       />
     </mat-form-field>
-
+    <p class="text-danger" *ngIf="validationObject.campaignName.isInvalid">
+      {{ validationObject.campaignName.message }}
+    </p>
     <!-- Campaign Start Date -->
     <mat-form-field class="example-full-width" appearance="outline">
       <mat-label>Select Start Date</mat-label>
@@ -39,7 +42,9 @@
       ></mat-datepicker-toggle>
       <mat-datepicker touchUi #pickerStartDate></mat-datepicker>
     </mat-form-field>
-
+    <p class="text-danger" *ngIf="validationObject.campaignStartDate.isInvalid">
+      {{ validationObject.campaignStartDate.message }}
+    </p>
     <!-- Campaign End Date -->
     <mat-form-field class="example-full-width-1" appearance="outline">
       <mat-label>Select End Date</mat-label>
@@ -57,20 +62,27 @@
       ></mat-datepicker-toggle>
       <mat-datepicker touchUi #pickerEndDate></mat-datepicker>
     </mat-form-field>
-
+    <p class="text-danger" *ngIf="validationObject.campaignEndDate.isInvalid">
+      {{ validationObject.campaignEndDate.message }}
+    </p>
     <!-- Daily budget -->
     <mat-form-field appearance="outline">
       <mat-label>Daily Budget ($)</mat-label>
       <input
-        required
         [(ngModel)]="campaignModel.dailyBudget"
         matInput
         type="number"
         step="0.01"
         name="campaignDailyBudget"
+        required
       />
     </mat-form-field>
-
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignDailyBudget.isInvalid"
+    >
+      {{ validationObject.campaignDailyBudget.message }}
+    </p>
     <!-- OverAll budget -->
     <mat-form-field appearance="outline">
       <mat-label>Overall Budget ($)</mat-label>
@@ -83,7 +95,12 @@
         [(ngModel)]="campaignModel.overallBudget"
       />
     </mat-form-field>
-
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignOverallBudget.isInvalid"
+    >
+      {{ validationObject.campaignOverallBudget.message }}
+    </p>
     <!-- Budget Pacing -->
     <mat-form-field appearance="outline">
       <mat-label>Budget Pacing</mat-label>
@@ -97,12 +114,23 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignBudgetPacing.isInvalid"
+    >
+      {{ validationObject.campaignBudgetPacing.message }}
+    </p>
+
     <!-- class="{{ i < 10 ? '' : 'd-none' }}" -->
     <!-- Domain Material Chips   -->
 
-    <!-- <mat-form-field class="example-chip-list" appearance="outline">
+    <mat-form-field class="example-chip-list" appearance="outline">
       <mat-label>Campaign Domains</mat-label>
-      <mat-chip-list #chipListDomain aria-label="Domain selection">
+      <mat-chip-list
+        class="limit-chip-list-height"
+        #chipListDomain
+        aria-label="Domain selection"
+      >
         <mat-chip
           *ngFor="let domain of campaignModel.domains; let i = index"
           (removed)="remove(domain)"
@@ -123,7 +151,18 @@
           (matChipInputTokenEnd)="add($event)"
         />
       </mat-chip-list>
-    </mat-form-field> -->
+    </mat-form-field>
+
+    <p class="text-danger" *ngIf="validationObject.campaignDomains.isInvalid">
+      {{ validationObject.campaignDomains.message }}
+    </p>
+
+    <p
+      class="text-success"
+      *ngIf="validationObject.campaignIncludeDomainFile.isInvalid"
+    >
+      {{ validationObject.campaignIncludeDomainFile.message }}
+    </p>
     <!-- File Upload Included Domain-->
 
     <input
@@ -141,15 +180,19 @@
       (click)="csvInputIncludedDomains.click()"
       type="button"
     >
-      Upload Included Domains (CSV)</button
-    ><br />
+      Upload Included Domains (CSV)
+    </button>
 
     <!-- class="{{ i < 10 ? '' : 'd-none' }}" -->
 
     <!--Excluded Domain Material Chips   -->
-    <!-- <mat-form-field class="example-chip-list" appearance="outline">
+    <mat-form-field class="example-chip-list" appearance="outline">
       <mat-label>Excluded Domains</mat-label>
-      <mat-chip-list #chipListExcludedDomain aria-label="Excluded Domain">
+      <mat-chip-list
+        class="limit-chip-list-height"
+        #chipListExcludedDomain
+        aria-label="Excluded Domain"
+      >
         <mat-chip
           color="accent"
           *ngFor="
@@ -174,8 +217,19 @@
           (matChipInputTokenEnd)="addExcludedDomain($event)"
         />
       </mat-chip-list>
-    </mat-form-field> -->
-
+    </mat-form-field>
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignExcludedDomains.isInvalid"
+    >
+      {{ validationObject.campaignExcludedDomains.message }}
+    </p>
+    <p
+      class="text-success"
+      *ngIf="validationObject.campaignExcludeDomainFile.isInvalid"
+    >
+      {{ validationObject.campaignExcludeDomainFile.message }}
+    </p>
     <!-- File Upload Excluded -->
 
     <input
@@ -203,6 +257,7 @@
         [formControl]="formObjForDevice"
         multiple
         required
+        [ngModel]="devicesNames"
       >
         <mat-select-trigger name="campaignDevices">
           {{formObjForDevice.value?.[0] || ''}}
@@ -219,7 +274,12 @@
         }}</mat-option>
       </mat-select>
     </mat-form-field>
-
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignListOfDevices.isInvalid"
+    >
+      {{ validationObject.campaignListOfDevices.message }}
+    </p>
     <!-- Ad Scheduling Day -->
     <mat-form-field appearance="outline">
       <mat-label>Ad Scheduling Days</mat-label>
@@ -244,7 +304,12 @@
         }}</mat-option>
       </mat-select>
     </mat-form-field>
-
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignAdScheduling.isInvalid"
+    >
+      {{ validationObject.campaignAdScheduling.message }}
+    </p>
     <!-- Ad Scheduling Time -->
     <mat-form-field
       *ngFor="
@@ -282,14 +347,19 @@
         (optionSelected)="handleGeoLocationSelect($event)"
       >
         <mat-option
-          *ngFor="let location of campaignModel.domains; let i = index"
+          *ngFor="let location of campaignModel.geoLocations; let i = index"
           [value]="location.name"
         >
           {{ location.name }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-
+    <p
+      class="text-danger"
+      *ngIf="validationObject.campaignInludedGeolocation.isInvalid"
+    >
+      {{ validationObject.campaignInludedGeolocation.message }}
+    </p>
     <!-- Included GeoLocation   -->
 
     <mat-form-field
@@ -339,7 +409,10 @@
         (optionSelected)="handleExcludedGeoLocationSelect($event)"
       >
         <mat-option
-          *ngFor="let location of listOfLocations; let i = index"
+          *ngFor="
+            let location of campaignModel.excludedGeolocations;
+            let i = index
+          "
           [value]="location.name"
         >
           {{ location.name }}
@@ -379,8 +452,6 @@
         />
       </mat-chip-list>
     </mat-form-field>
-    <!-- Error Field -->
-    <p class="text-danger fs-6 fw-semibold">{{ err }}</p>
 
     <!-- Submit Button -->
     <button

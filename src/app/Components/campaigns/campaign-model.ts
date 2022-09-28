@@ -10,7 +10,7 @@ export class CampaignModel {
     public devices: Array<string>,
     public budgetPacing: string,
     public adSchedulingDays: Array<string>,
-    public adSchedulingDayAndTime: Array<{ name?: string; time: [] }>,
+    public adSchedulingDayAndTime: Array<{ day?: string; hour: [] }>,
     public geoLocations: Array<string>,
     public excludedGeolocations: Array<string>
   ) {}
